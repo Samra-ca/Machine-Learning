@@ -1,0 +1,59 @@
+# Simple Linear Regression with one feature (TV vs Sales)
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error
+
+# Step 1: Load dataset
+dataset = pd.read_csv(r"Advertising.csv")
+
+# Step 2: Select one feature (TV) and target (Sales)
+X = dataset[["TV"]].values   # Feature: TV budget
+y = dataset["Sales"].values  # Target: Sales
+
+# Step 3: Split into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=1/3, random_state=0
+)
+
+# Step 4: Train the Simple Linear Regression model
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+# Step 5: Predictions
+y_pred_train = regressor.predict(X_train)
+y_pred_test = regressor.predict(X_test)
+
+# Step 6: Visualize Training set results
+plt.scatter(X_train, y_train, color='red', label="Training data")
+plt.plot(X_train, regressor.predict(X_train), color='blue', label="Best fit line")
+plt.title('Sales vs TV (Training set)')
+plt.xlabel('TV Advertising Budget')
+plt.ylabel('Sales')
+plt.legend()
+plt.show()
+
+# Step 7: Visualize Test set results
+plt.scatter(X_test, y_test, color='red', label="Test data")
+plt.plot(X_train, regressor.predict(X_train), color='blue', label="Best fit line")
+plt.title('Sales vs TV (Test set)')
+plt.xlabel('TV Advertising Budget')
+plt.ylabel('Sales')
+plt.legend()
+plt.show()
+
+# Step 8: Print Coefficient and Intercept
+print("Coefficient (slope):", regressor.coef_[0])
+print("Intercept:", regressor.intercept_)
+
+# Step 9: Single prediction
+print("Predicted Sales for TV=200:", regressor.predict([[200]])[0])
+
+# Step 10: Model Evaluation
+print("\n--- Model Evaluation ---")
+print("Train R²:", r2_score(y_train, y_pred_train))
+print("Test R²:", r2_score(y_test, y_pred_test))
+print("Train RMSE:", np.sqrt(mean_squared_error(y_train, y_pred_train)))
+print("Test RMSE:", np.sqrt(mean_squared_error(y_test, y_pred_test)))
